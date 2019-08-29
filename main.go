@@ -168,7 +168,8 @@ func less(a, b cc.Location) bool {
 func findDecls(root *cc.Node) []*cc.Node {
 	var decls []*cc.Node
 	visit := func(n *cc.Node) {
-		if n.Body.Kind() == clang.Cursor_VarDecl {
+		switch n.Body.Kind() {
+		case clang.Cursor_VarDecl, clang.Cursor_FunctionDecl:
 			decls = append(decls, n)
 		}
 	}
