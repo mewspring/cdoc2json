@@ -1,4 +1,4 @@
-// foobaz -clang_args="-m32|-I./include|-I/usr/lib/clang/8.0.1/include" foo.h
+// cdoc2json -clang_args="-m32|-I./include|-I/usr/lib/clang/8.0.1/include" foo.h
 
 // clang++ -Wp,-v -x c++ - -fsyntax-only < /dev/null 2>&1 | grep /clang/
 
@@ -23,12 +23,12 @@ import (
 )
 
 var (
-	// dbg is a logger with the "foobaz:" prefix which logs debug messages to
+	// dbg is a logger with the "cdoc2json:" prefix which logs debug messages to
 	// standard error.
-	dbg = log.New(os.Stderr, term.CyanBold("foobaz:")+" ", 0)
-	// warn is a logger with the "foobaz:" prefix which logs warning messages to
+	dbg = log.New(os.Stderr, term.CyanBold("cdoc2json:")+" ", 0)
+	// warn is a logger with the "cdoc2json:" prefix which logs warning messages to
 	// standard error.
-	warn = log.New(os.Stderr, term.RedBold("foobaz:")+" ", 0)
+	warn = log.New(os.Stderr, term.RedBold("cdoc2json:")+" ", 0)
 )
 
 func main() {
