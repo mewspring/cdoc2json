@@ -19,6 +19,7 @@ import (
 	"github.com/mewkiz/pkg/jsonutil"
 	"github.com/mewkiz/pkg/term"
 	"github.com/mewspring/cc"
+	"github.com/mewspring/cdoc2json/docs"
 	"github.com/pkg/errors"
 )
 
@@ -84,15 +85,15 @@ func parse(srcPath string, commentFromIdent map[string]string, clangArgs ...stri
 	return nil
 }
 
-func printDocComments(docComments []DocComment) {
+func printDocComments(docComments []docs.DocComment) {
 	for _, docComment := range docComments {
 		fmt.Println(docComment.Decl.Body.Spelling())
 		fmt.Println(docComment.Comment.Lit)
 	}
 }
 
-func mergeLineComments(comments []Comment) []Comment {
-	var new []Comment
+func mergeLineComments(comments []docs.Comment) []docs.Comment {
+	var new []docs.Comment
 	for i := 0; i < len(comments); i++ {
 		a := comments[i]
 		for j := i + 1; j < len(comments); j++ {
@@ -107,7 +108,7 @@ func mergeLineComments(comments []Comment) []Comment {
 	return new
 }
 
-func isConsequtiveLineComments(a, b Comment) bool {
+func isConsequtiveLineComments(a, b docs.Comment) bool {
 	if !strings.HasPrefix(a.Lit, "//") {
 		return false
 	}
@@ -117,18 +118,13 @@ func isConsequtiveLineComments(a, b Comment) bool {
 	return a.Loc.Line+uint32(strings.Count(a.Lit, "\n")) == b.Loc.Line-1
 }
 
-func mergeLineComment(a, b Comment) Comment {
+func mergeLineComment(a, b docs.Comment) docs.Comment {
 	a.Lit += "\n" + b.Lit
 	return a
 }
 
-type DocComment struct {
-	Decl    *cc.Node
-	Comment Comment
-}
-
-func addDocComments(decls []*cc.Node, comments []Comment) []DocComment {
-	var docComments []DocComment
+func addDocComments(decls []*cc.Node, comments []docs.Comment) []docs.DocComment {
+	var docComments []docs.DocComment
 	i := 0 // current comment index.
 loop:
 	for _, decl := range decls {
@@ -142,7 +138,7 @@ loop:
 			}
 			if decl.Loc.Line-commEndLoc.Line <= 1 {
 				// doc comment.
-				docComment := DocComment{
+				docComment := docs.DocComment{
 					Decl:    decl,
 					Comment: comment,
 				}
@@ -181,17 +177,12 @@ func findDecls(root *cc.Node) []*cc.Node {
 	return decls
 }
 
-type Comment struct {
-	Lit string
-	Loc cc.Location
-}
-
-func parseComments(srcPath string) ([]Comment, error) {
+func parseComments(srcPath string) ([]docs.Comment, error) {
 	src, err := ioutil.ReadFile(srcPath)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	var comments []Comment
+	var comments []docs.Comment
 	fset := token.NewFileSet()
 	file := fset.AddFile(srcPath, 1, len(src))
 	s := &scanner.Scanner{}
@@ -216,7 +207,7 @@ func parseComments(srcPath string) ([]Comment, error) {
 				Line: uint32(pos.Line),
 				Col:  uint32(pos.Column),
 			}
-			comment := Comment{
+			comment := docs.Comment{
 				Lit: lit,
 				Loc: loc,
 			}
