@@ -26,8 +26,8 @@ var (
 	// dbg is a logger with the "cdoc2json:" prefix which logs debug messages to
 	// standard error.
 	dbg = log.New(os.Stderr, term.CyanBold("cdoc2json:")+" ", 0)
-	// warn is a logger with the "cdoc2json:" prefix which logs warning messages to
-	// standard error.
+	// warn is a logger with the "cdoc2json:" prefix which logs warning messages
+	// to standard error.
 	warn = log.New(os.Stderr, term.RedBold("cdoc2json:")+" ", 0)
 )
 
