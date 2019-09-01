@@ -101,15 +101,20 @@ func addComments(srcFile *SourceFile, docComments map[string]string) ([]byte, bo
 	return []byte(newSrc.String()), change
 }
 
+// normalizeComment replaces line comments with multi-line comments.
 func normalizeComment(comment string) string {
 	lines := strings.Split(comment, "\n")
 	for i, line := range lines {
-		if strings.HasPrefix(line, "///") {
+		switch {
+		case strings.HasPrefix(line, "///"):
 			// strip one trailing slash of ///.
-			lines[i] = line[1:]
+			lines[i] = line[len("///"):]
+		case strings.HasPrefix(line, "//"):
+			// strip one trailing slash of //.
+			lines[i] = line[len("//"):]
 		}
 	}
-	return strings.Join(lines, "\n")
+	return "/*\n" + strings.Join(lines, "\n") + "\n*/"
 }
 
 func insert(ss []string, pos int, s string) []string {
