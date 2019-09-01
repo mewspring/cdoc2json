@@ -68,7 +68,8 @@ func parse(srcPath string, commentFromIdent map[string]string, clangArgs ...stri
 	comments = mergeLineComments(comments)
 	file, err := cc.ParseFile(srcPath, clangArgs...)
 	if err != nil {
-		return errors.WithStack(err)
+		warn.Printf("parse error: %+v", err)
+		// continue with partial AST.
 	}
 	defer file.Close()
 	decls := findDecls(file.Root)
